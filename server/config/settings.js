@@ -10,7 +10,8 @@ module.exports = {
   },
   staging: {
   },
-  production: { 
+  production: {
+    db: 'mongodb://nikiviliev:cdeszaq1@ds121889.mlab.com:21889/fitness',
     port: process.env.PORT
   }
 }
