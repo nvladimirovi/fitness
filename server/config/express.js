@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const passport = require('passport')
 const handlebars = require('express-handlebars')
-const helmet = require('helmet')
+const helmet = require('helmet') 
 var csrf = require('csurf') // Cross-site Request Forgery Protection  
 
 module.exports = (app) => {
@@ -25,14 +25,14 @@ module.exports = (app) => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  app.use(csrf()) // Cross-site Request Forgery Protection 
+  // app.use(csrf()) // Cross-site Request Forgery Protection 
 
   app.use((req, res, next) => {
     if (req.user) {
       res.locals.currentUser = req.user
       res.locals.isAdmin = req.user.roles.indexOf('Admin') >= 0
     }
-    res.locals._csrf = req.csrfToken()
+    // res.locals._csrf = req.csrfToken()
     
     next()
   })
