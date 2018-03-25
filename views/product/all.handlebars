@@ -1,0 +1,37 @@
+<section class="site_section all_products">
+    <div class="search">
+        <form action="/product/all" method="GET">
+            <input type="hidden" name="_csrf" value="{{ _csrf }}">
+            <input type="text" name="search" />
+            <input type="submit" value="Search" />
+        </form>
+    </div>
+
+    <div class="row wrapper">
+        {{#each products}}  
+            <div class="cell">
+                <h2>{{this.product}}</h2>
+
+                <a href="/product/update/{{this._id}}">Update</a>
+
+                <div class="delete">
+                    <form id="delete{{@index}}" action="/product/delete/{{this._id}}" method="POST">
+                        <input type="hidden" name="_csrf" value="{{ ../_csrf }}">
+                    </form>
+                    <a href="#" onclick="document.getElementById('delete{{@index}}').submit()">Delete</a>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+
+    <div class="pager">
+        {{#if hasPrevPage}}
+            <a href="/product/all?page={{prevPage}}&search={{search}}">&lt;&lt;</a>
+            &nbsp; &nbsp; &nbsp;
+        {{/if}}
+
+        {{#if hasNextPage}}
+            <a href="/product/all?page={{nextPage}}&search={{search}}">&gt;&gt;</a>
+        {{/if}}
+    </div>
+</section>

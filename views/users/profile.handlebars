@@ -1,0 +1,55 @@
+{{#each notes}}
+	<table>
+		<tr>
+			<th>
+				Food
+			</th>
+			<th>
+				Weight
+			</th>
+			<th>
+				Callories
+			</th>
+			<th>
+				Carbs
+			</th>
+			<th>
+				Protein
+			</th>
+			<th>
+				Fat
+			</th>
+		</tr>
+		{{#each this.products}}
+		<tr>
+			<td>{{this.product.product}}</td>
+			<td>{{this.weight}}</td>
+			<td>{{this.product.callories}}</td>
+			<td>{{this.product.carbs}}</td>
+			<td>{{this.product.protein}}</td>
+			<td>{{this.product.fat}}</td>
+		</tr>
+		{{/each}}
+
+		<tr>
+			<th colspan="2" align="left">
+				Total:
+			</th>
+			<th align="left">
+				{{this.total.callories}}
+			</th>
+
+			<th align="left">
+				{{this.total.carbs}}
+			</th>
+
+			<th align="left">
+				{{this.total.protein}}
+			</th>
+
+			<th align="left">
+				{{this.total.fat}}
+			</th>
+		</tr>
+	</table>
+{{/each}}
