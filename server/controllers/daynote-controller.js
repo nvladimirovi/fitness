@@ -43,6 +43,7 @@ module.exports = {
 			.then((note) => {
 				if(note) {
 					console.log("Note already exist!")
+					
 					Product
 					.findOne({ product: daynote_req.product })
 					.then((product) => {
@@ -78,8 +79,9 @@ module.exports = {
 							month,
 							year,
 							user: user._id,
-							products: [{ 
-								product: product._id, weight: daynote_req.weight 
+							products: [{
+								product: product._id,
+								weight: daynote_req.weight
 							}],
 							total: {
 								weight,
@@ -112,6 +114,18 @@ module.exports = {
 
 	},
 	delete_post: (req, res) => {
-		
+		const postToDel = req.params.id;
+
+		DayNote
+		.findById(postToDel)
+		.then((note) => {
+			note.remove({ _id: note._id})
+			res.redirect('/users/profile');
+		})
+		.catch((err) => {
+			let message = errorHandler.handleMongooseError(err);
+			res.locals.globalError = message;
+			res.render("users/profile");
+		})
 	}
 };

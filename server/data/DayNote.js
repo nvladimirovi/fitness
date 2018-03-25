@@ -7,12 +7,10 @@ let dayNoteSchema = new mongoose.Schema({
     month: { type: Number, required: true },
     year: { type: Number, required: true },
     user: { type: ObjectId, ref: 'User' },
-    products: [ 
-        { 
+    products: [{ 
             product: { type: ObjectId, ref: 'Product', required: true },
             weight: { type: Number, required: true }  
-        } 
-    ],
+        }],
     total: { type: Object }
 })
 

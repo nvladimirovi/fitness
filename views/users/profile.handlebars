@@ -1,6 +1,14 @@
 {{#each notes}}
 	<table>
 		<tr>
+			<td>
+				<form id="delete-post-form" action="/daynote/delete/{{ this._id }}" method="POST">
+					<input type="hidden" name="_csrf" value="{{ ../_csrf }}">
+				</form>
+				<a href="javascript:document.getElementById('delete-post-form').submit()">Delete</a>
+			</td>
+		</tr>
+		<tr>
 			<th>
 				Food
 			</th>

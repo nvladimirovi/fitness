@@ -21,15 +21,15 @@ module.exports = app => {
 	);
 	app.post("/users/login", controllers.users.loginPost)
 	app.post("/users/logout", controllers.users.logout)
-	app.get("/users/me", auth.isAuthenticated, controllers.users.profile)
+	app.get("/users/profile", auth.isAuthenticated, controllers.users.profile)
 
 	/**
 	 * Cars
 	 */
-	app.get("/cars/add", auth.isInRole("Admin"), controllers.cars.addGet)
-	app.post("/cars/add", auth.isInRole("Admin"), controllers.cars.addPost)
-	app.get("/cars/all", controllers.cars.all);
-	app.post("/cars/rent/:id", auth.isAuthenticated, controllers.cars.rent)
+	// app.get("/cars/add", auth.isInRole("Admin"), controllers.cars.addGet)
+	// app.post("/cars/add", auth.isInRole("Admin"), controllers.cars.addPost)
+	// app.get("/cars/all", controllers.cars.all);
+	// app.post("/cars/rent/:id", auth.isAuthenticated, controllers.cars.rent)
 
 	/**
 	 * Product CRUD
@@ -47,13 +47,15 @@ module.exports = app => {
 		.route("/product/update/:id")
 		.get(auth.isInRole("Admin"), controllers.product.update_get)
 		.post(auth.isInRole("Admin"),controllers.product.update_post)
+
 	/**
-	 * Daynote CRUD
+	 * Daynote CRUD 
 	 */
 	app
 		.route("/daynote/create")
 		.get(auth.isAuthenticated, controllers.daynote.create_get)
 		.post(auth.isAuthenticated, controllers.daynote.create_post)
+	app.post('/daynote/delete/:id', auth.isAuthenticated, controllers.daynote.delete_post)
 
 	/**
 	 * Not Found
