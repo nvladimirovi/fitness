@@ -8,6 +8,13 @@
 				<a href="javascript:document.getElementById('delete-post-form').submit()">Delete</a>
 			</td>
 		</tr>
+		{{#if this.yourWeight}}
+		<tr>
+			<td colspan="6">
+				Your current weight is: {{ this.yourWeight }}
+			</td>
+		</tr>
+		{{/if}}
 		<tr>
 			<th>
 				Food

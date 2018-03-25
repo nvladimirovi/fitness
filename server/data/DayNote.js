@@ -11,6 +11,7 @@ let dayNoteSchema = new mongoose.Schema({
             product: { type: ObjectId, ref: 'Product', required: true },
             weight: { type: Number, required: true }  
         }],
+    yourWeight: { type: Number },
     total: { type: Object }
 })
 

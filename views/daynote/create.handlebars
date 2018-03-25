@@ -3,13 +3,17 @@
 	<fieldset>
 		<select name="product" id="product">
 			{{#each products}}
-				<option value="{{this.product}}">{{this.product}}</option>
+				<option value="{{ this.product }}">{{ this.product }}</option>
 			{{/each}}
 		</select>
 	</fieldset>
 
 	<fieldset>
-		<input type="number" name="weight" value="{{weight}}" placeholder="Weight...">
+		<input type="number" name="weight" value="{{ weight }}" placeholder="Weight...">
+	</fieldset>
+
+	<fieldset>
+		<input type="number" name="yourWeight" value="{{ yourWeight }}" placeholder="Your Weight...">
 	</fieldset>
 
 	<input type="submit" value="Create" />

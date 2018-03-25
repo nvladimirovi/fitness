@@ -14,10 +14,10 @@ module.exports = {
 		})
   	},
 	create_post: (req, res) => {
-		let daynote_req = req.body
-		let current_user_id = req.user._id
+		const daynote_req = req.body
+		const current_user_id = req.user._id
 
-		let weight = parseInt(daynote_req.weight);
+		const weight = parseInt(daynote_req.weight);
 
 		if (!daynote_req.product || !daynote_req.weight) {
 			res.locals.globalError = "All fields are required!"
@@ -30,10 +30,10 @@ module.exports = {
 			return;
 		}
 
-		let newDate = new Date()
-		let date = newDate.getDate()
-		let month = newDate.getMonth()
-		let year = newDate.getFullYear()
+		const newDate = new Date()
+		const date = newDate.getDate()
+		const month = newDate.getMonth()
+		const year = newDate.getFullYear()
 
 		User
 		.findById(current_user_id)
@@ -72,8 +72,8 @@ module.exports = {
 					Product
 					.findOne({ product: daynote_req.product })
 					.then((product) => {
-						DayNote
-						.create({
+
+						const newNote = {
 							dateOriginal: newDate,
 							date,
 							month,
@@ -90,7 +90,14 @@ module.exports = {
 								protein: (product.protein / 100) * weight,
 								fat: (product.fat / 100) * weight,
 							}
-						})
+						}
+
+						if (daynote_req.yourWeight && daynote_req.yourWeight > 0) {
+							newNote.yourWeight = parseInt(daynote_req.yourWeight) || 0
+						}
+
+						DayNote
+						.create(newNote)
 						.then(() => {
 							res.redirect("/daynote/create")
 						})
