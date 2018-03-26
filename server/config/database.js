@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('../data/User')
-
-require('../data/Car')
-require('../data/Renting')
+// require('../data/Car')
+// require('../data/Renting')
 require('../data/Product')
 require('../data/DayNote')
 

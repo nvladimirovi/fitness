@@ -30,7 +30,8 @@ module.exports.seedAdminUser = () => {
     let hashedPass = encryption.generateHashedPassword(salt, 'qwedcxzaq1')
 
     User.create({
-      username: 'Webmaster',
+      username: 'webmaster',
+      email: 'nikiviliev98@gmail.com',
       firstName: 'Webmaster',
       lastName: 'Webmaster',
       salt: salt,

@@ -1,5 +1,12 @@
 <div>
-	<h4>Hi {{ info.name }}! {{#if info.weight }}Your current weight is {{ info.weight }}.{{/if}} Click down if you want to update it.</h4>
+	<h4>Hi {{ info.name }}! </h4>
+	<h4>
+	{{#if info.weight }}
+		Your current weight is {{ info.weight }}. 
+	{{else}} 
+		Click down if you want to update your weight.
+	{{/if}}
+	</h4>
 	
 	<form action="/users/update/weight" method="POST">
 		<input type="hidden" name="_csrf" value="{{ _csrf }}">
