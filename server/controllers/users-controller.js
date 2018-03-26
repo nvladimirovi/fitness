@@ -2,14 +2,14 @@ const encryption = require('../utilities/encryption')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const DayNote = mongoose.model('DayNote')
-const validator = require('validator')
+// const validator = require('validator')
 
 function validateSignupForm (payload) {
   const errors = {}
   let isFormValid = true
   let message = ''
 
-  if (!payload || typeof payload.email !== 'string' || !validator.isEmail(payload.email)) {
+  if (!payload || typeof payload.email !== 'string') {
     isFormValid = false
     errors.email = 'Please provide a correct email address.'
   }
@@ -76,7 +76,7 @@ function validateWeightUpdate (payload) {
   let isFormValid = true
   let message = ''
 
-  if (!payload || payload.weight <= 30 || payload.weight >= 300 || !validator.isNumeric(payload.weight)) {
+  if (!payload || payload.weight <= 30 || payload.weight >= 300) {
     isFormValid = false
     errors.weight = 'Please provide your weight in kg.'
   }

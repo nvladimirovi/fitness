@@ -1,14 +1,14 @@
 {
-  "name": "blog-system",
+  "name": "fitness-system",
   "version": "0.0.1",
-  "description": "Blog System",
+  "description": "Fitness System",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
     "npm": "4.2.0"
   },
   "keywords": [
-    "blog",
+    "fitness",
     "system"
   ],
   "author": "NI",
@@ -29,8 +29,5 @@
   },
   "scripts": {
     "start": "node index.js"
-  },
-  "devDependencies": {
-    "validator": "^9.4.1"
   }
 }
