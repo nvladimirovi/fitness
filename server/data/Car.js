@@ -8,7 +8,7 @@ let carSchema = new mongoose.Schema({
   power: { type: Number },
   createdOn: { type: Date, default: Date.now() },
   image: { type: String, required: true },
-  isRented: { type: Boolean, default: false },
+  isRented: { type: Boolean, default: false }
 })
 
 let Car = mongoose.model('Car', carSchema)

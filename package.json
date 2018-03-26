@@ -28,5 +28,8 @@
   },
   "scripts": {
     "start": "node index.js"
+  },
+  "devDependencies": {
+    "validator": "^9.4.1"
   }
 }

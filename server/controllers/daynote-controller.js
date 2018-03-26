@@ -1,138 +1,172 @@
-const mongoose = require("mongoose")
-const DayNote = mongoose.model("DayNote")
-const User = mongoose.model("User")
-const Product = mongoose.model("Product")
-const errorHandler = require("../utilities/error-handler")
+const mongoose = require('mongoose')
+const DayNote = mongoose.model('DayNote')
+const User = mongoose.model('User')
+const Product = mongoose.model('Product')
+const errorHandler = require('../utilities/error-handler')
+
+function validateCreateDayNote (payload) {
+  const errors = {}
+  let isFormValid = true
+  let message = ''
+
+  if (!payload || payload.weight <= 10) {
+    isFormValid = false
+    errors.weight = 'Please provide valid number which is greather then 10.'
+  }
+
+  if (!payload || typeof payload.product !== 'string' || payload.product.trim().length === 0) {
+    isFormValid = false
+    errors.product = 'Please select valid product name.'
+  }
+
+  if (!isFormValid) {
+    message = 'Check the form for errors.'
+  }
+
+  return {
+    success: isFormValid,
+    message,
+    errors
+  }
+}
 
 module.exports = {
-  	create_get: (req, res) => {
-		Product
-		.find({})
-		.sort("product")
-		.then((products) => {
-			res.render("daynote/create", { products })
-		})
-  	},
-	create_post: (req, res) => {
-		const daynote_req = req.body
-		const current_user_id = req.user._id
+  create_get: (req, res) => {
+    Product
+      .find({})
+      .sort('product')
+      .then((products) => {
+        res.render('daynote/create', { products })
+      })
+  },
+  create_post: (req, res) => {
+    const validationResult = validateCreateDayNote(req.body)
+    if (!validationResult.success) {
+      console.log(validationResult.errors)
+      res.locals.globalError = validationResult.message
+      Product
+        .find({})
+        .sort('product')
+        .then((products) => {
+          res.render('daynote/create', { products })
+        })
+      return
+    }
 
-		const weight = parseInt(daynote_req.weight);
+    const dayNoteReq = req.body
+    const currentUserId = req.user._id
+    const weight = parseInt(dayNoteReq.weight)
+    const newDate = new Date()
+    const date = newDate.getDate()
+    const month = newDate.getMonth()
+    const year = newDate.getFullYear()
 
-		if (!daynote_req.product || !daynote_req.weight) {
-			res.locals.globalError = "All fields are required!"
-			Product
-			.find({})
-			.sort("product")
-			.then((products) => {
-				res.render("daynote/create", { products })
-			})
-			return;
-		}
+    User
+      .findById(currentUserId)
+      .then((user) => {
+        DayNote
+          .findOne({ user: currentUserId, date, month, year })
+          .then((note) => {
+            if (note) {
+              Product
+                .findOne({ product: dayNoteReq.product })
+                .then((product) => {
+                  let { callories, carbs, protein, fat } = note.total
 
-		const newDate = new Date()
-		const date = newDate.getDate()
-		const month = newDate.getMonth()
-		const year = newDate.getFullYear()
+                  note
+                    .products.push({
+                      product: product._id, weight
+                    })
 
-		User
-		.findById(current_user_id)
-		.then((user) => {
-			DayNote
-			.findOne({ user: current_user_id, date, month, year })
-			.then((note) => {
-				if(note) {
-					console.log("Note already exist!")
-					
-					Product
-					.findOne({ product: daynote_req.product })
-					.then((product) => {
-						let { callories, carbs, protein, fat } = note.total
+                  note.total = {
+                    weight: note.total.weight + weight,
+                    callories: parseInt(callories + ((product.callories / 100) * weight)),
+                    carbs: carbs + ((product.carbs / 100) * weight),
+                    protein: protein + ((product.protein / 100) * weight),
+                    fat: fat + ((product.fat / 100) * weight)
+                  }
 
-						note
-						.products.push({
-							product: product._id, weight
-						})
+                  note
+                    .save()
+                    .then(() => {
+                      res.redirect('/daynote/create')
+                    })
+                })
+            } else {
+              Product
+                .findOne({ product: dayNoteReq.product })
+                .then((product) => {
+                  const newNote = {
+                    dateOriginal: newDate,
+                    date,
+                    month,
+                    year,
+                    user: user._id,
+                    products: [{
+                      product: product._id,
+                      weight: dayNoteReq.weight
+                    }],
+                    total: {
+                      weight,
+                      callories: (product.callories / 100) * weight,
+                      carbs: (product.carbs / 100) * weight,
+                      protein: (product.protein / 100) * weight,
+                      fat: (product.fat / 100) * weight
+                    }
+                  }
 
-						note.total = {
-							weight: note.total.weight + weight,
-							callories: parseInt(callories + ((product.callories / 100) * weight)),
-							carbs: carbs + ((product.carbs / 100) * weight),
-							protein: protein + ((product.protein / 100) * weight),
-							fat: fat + ((product.fat / 100) * weight)
-						}
-						
-						note
-						.save()
-						.then(() => {
-							res.redirect("/daynote/create")
-						})
-					})
-				} else {
-					Product
-					.findOne({ product: daynote_req.product })
-					.then((product) => {
+                  DayNote
+                    .create(newNote)
+                    .then((note) => {
+                      res.redirect('/daynote/create')
+                    })
+                })
+                .catch((err) => {
+                  let message = errorHandler.handleMongooseError(err)
+                  res.locals.globalError = message
+                  res.render('daynote/create')
+                })
+            }
+          })
+      })
+  },
+  update_note_get: (req, res) => {},
+  update_note_post: (req, res) => {},
+  delete_product: (req, res) => {
+    const noteId = req.params.note
+    const productToDelById = req.params.product
 
-						const newNote = {
-							dateOriginal: newDate,
-							date,
-							month,
-							year,
-							user: user._id,
-							products: [{
-								product: product._id,
-								weight: daynote_req.weight
-							}],
-							total: {
-								weight,
-								callories: (product.callories / 100) * weight,
-								carbs: (product.carbs / 100) * weight,
-								protein: (product.protein / 100) * weight,
-								fat: (product.fat / 100) * weight,
-							}
-						}
+    DayNote
+      .findOne({ _id: noteId })
+      .populate('products.product')
+      .then((note) => {
+        note.products.id(productToDelById).remove()
+        note.calcTotal()
+        note
+          .save()
+          .then((note) => {
+            res.redirect('/users/profile')
+          })
+      })
+      .catch((err) => {
+        let message = errorHandler.handleMongooseError(err)
+        res.locals.globalError = message
+        res.render('users/profile')
+      })
+  },
+  delete_note: (req, res) => {
+    const postToDel = req.params.id
 
-						if (daynote_req.yourWeight && daynote_req.yourWeight > 0) {
-							newNote.yourWeight = parseInt(daynote_req.yourWeight) || 0
-						}
-
-						DayNote
-						.create(newNote)
-						.then(() => {
-							res.redirect("/daynote/create")
-						})
-					})
-					.catch((err) => {
-						let message = errorHandler.handleMongooseError(err);
-						res.locals.globalError = message;
-						res.render("daynote/create");
-					})
-				}
-			})
-		})
-	},
-	update_get: (req, res) => {
-
-	},
-	update_post: (req, res) => {
-
-	},
-	delete_product_post: (req, res) => {
-
-	},
-	delete_post: (req, res) => {
-		const postToDel = req.params.id;
-
-		DayNote
-		.findById(postToDel)
-		.then((note) => {
-			note.remove({ _id: note._id})
-			res.redirect('/users/profile');
-		})
-		.catch((err) => {
-			let message = errorHandler.handleMongooseError(err);
-			res.locals.globalError = message;
-			res.render("users/profile");
-		})
-	}
-};
+    DayNote
+      .findById(postToDel)
+      .then((note) => {
+        note.remove({ _id: note._id })
+        res.redirect('/users/profile')
+      })
+      .catch((err) => {
+        let message = errorHandler.handleMongooseError(err)
+        res.locals.globalError = message
+        res.render('users/profile')
+      })
+  }
+}

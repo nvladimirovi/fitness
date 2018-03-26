@@ -15,7 +15,7 @@ module.exports = {
       res.render('cars/add', carReq)
       return
     }
- 
+
     Car
       .create({
         make: carReq.make,
@@ -34,7 +34,7 @@ module.exports = {
         res.render('cars/add', carReq)
       })
   },
-  all: (req, res) => { 
+  all: (req, res) => {
     let pageSize = 2
     let page = parseInt(req.query.page) || 1
     let search = req.query.search
@@ -90,7 +90,7 @@ module.exports = {
               })
           })
           .catch(err => {
-
+            console.log(err)
           })
       })
       .catch(err => {
@@ -100,4 +100,3 @@ module.exports = {
       })
   }
 }
- 
