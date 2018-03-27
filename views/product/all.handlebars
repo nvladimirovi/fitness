@@ -1,7 +1,7 @@
 <section class="site_section all_products">
     <div class="search">
         <form action="/product/all" method="GET">
-            <input type="hidden" name="_csrf" value="{{ _csrf }}">
+            {{!-- <input type="hidden" name="_csrf" value="{{ _csrf }}"> --}}
             <input type="text" name="search" />
             <input type="submit" value="Search" />
         </form>

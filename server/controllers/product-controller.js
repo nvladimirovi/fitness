@@ -92,7 +92,7 @@ module.exports = {
       })
   },
   read_get: (req, res) => {
-    const pageSize = 4
+    const pageSize = 2
     let page = parseInt(req.query.page) || 1
     let search = req.query.search
 
@@ -108,7 +108,7 @@ module.exports = {
         res.render('product/all', {
           products,
           hasPrevPage: page > 1,
-          hasNextPage: products.length > 0,
+          hasNextPage: products.length > 0 && products.length === pageSize,
           prevPage: page - 1,
           nextPage: page + 1,
           search: search
