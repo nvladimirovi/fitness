@@ -12,22 +12,22 @@ function validateProductReqBody (payload) {
     errors.product = 'Please select valid product name.'
   }
 
-  if (!payload || payload.callories <= 0) {
+  if (!payload || payload.callories < 0) {
     isFormValid = false
     errors.callories = 'Please provide valid number which is greather then 0.'
   }
 
-  if (!payload || payload.carbs <= 0) {
+  if (!payload || payload.carbs < 0) {
     isFormValid = false
     errors.carbs = 'Please provide valid number which is greather then 0.'
   }
 
-  if (!payload || payload.protein <= 0) {
+  if (!payload || payload.protein < 0) {
     isFormValid = false
     errors.protein = 'Please provide valid number which is greather then 0.'
   }
 
-  if (!payload || payload.fat <= 0) {
+  if (!payload || payload.fat < 0) {
     isFormValid = false
     errors.fat = 'Please provide valid number which is greather then 0.'
   }
@@ -65,21 +65,30 @@ module.exports = {
     } = req.body
 
     Product
-      .create({
-        product: product,
-        callories: callories,
-        carbs: carbs,
-        protein: protein,
-        fat: fat
-      })
-      .then(() => {
-        res.locals.success = 'The product was successfully created.'
-        res.render('product/create')
-      })
-      .catch((err) => {
-        let message = errorHandler.handleMongooseError(err)
-        res.locals.globalError = message
-        res.render('product/create', req.body)
+      .findOne({ product: product })
+      .then((isThereProduct) => {
+        if (isThereProduct) {
+          res.locals.globalError = 'Product already exists.'
+          res.render('product/create', req.body)
+        } else {
+          Product
+            .create({
+              product: product,
+              callories: callories,
+              carbs: carbs,
+              protein: protein,
+              fat: fat
+            })
+            .then(() => {
+              res.locals.success = 'The product was successfully created.'
+              res.render('product/create')
+            })
+            .catch((err) => {
+              let message = errorHandler.handleMongooseError(err)
+              res.locals.globalError = message
+              res.render('product/create', req.body)
+            })
+        }
       })
   },
   read_get: (req, res) => {
@@ -109,9 +118,9 @@ module.exports = {
   update_get: (req, res) => {
     Product
       .findById(req.params.id)
-      .then((product) => {
+      .then((currentProduct) => {
         res.render('product/update', {
-          product
+          currentProduct
         })
       })
   },
@@ -120,34 +129,48 @@ module.exports = {
     if (!validationResult.success) {
       console.log(validationResult.errors)
       res.locals.globalError = validationResult.message
-      res.render('product/create', req.body)
+      res.render('product/update', req.body)
       return
     }
+
+    const { product, callories, carbs, protein, fat } = req.body
 
     Product
       .findById(req.params.id)
       .then((currentProduct) => {
-        const { product, callories, carbs, protein, fat } = req.body
+        Product
+          .findOne({ product })
+          .then((isAlreadyExist) => {
+            if (isAlreadyExist && isAlreadyExist.product !== currentProduct.product) {
+              res.locals.globalError = 'Product already exist.'
+              res.render('product/update')
+            } else {
+              if (currentProduct.product !== product) currentProduct.product = product
 
-        if (currentProduct.product !== product) currentProduct.product = product
+              if (currentProduct.callories !== callories) currentProduct.callories = callories
 
-        if (currentProduct.callories !== callories) currentProduct.callories = callories
+              if (currentProduct.carbs !== carbs) currentProduct.carbs = carbs
 
-        if (currentProduct.carbs !== carbs) currentProduct.carbs = carbs
+              if (currentProduct.protein !== protein) currentProduct.protein = protein
 
-        if (currentProduct.protein !== protein) currentProduct.protein = protein
+              if (currentProduct.fat !== fat) currentProduct.fat = fat
 
-        if (currentProduct.fat !== fat) currentProduct.fat = fat
-
-        currentProduct
-          .save()
-          .then((currentProduct) => {
-            res.redirect('/product/update/' + currentProduct._id)
+              currentProduct
+                .save()
+                .then((currentProduct) => {
+                  res.redirect(`/product/update/${currentProduct._id}`)
+                })
+                .catch((err) => {
+                  let message = errorHandler.handleMongooseError(err)
+                  res.locals.globalError = message
+                  res.render('product/all', currentProduct)
+                })
+            }
           })
           .catch((err) => {
             let message = errorHandler.handleMongooseError(err)
             res.locals.globalError = message
-            res.render('product/create', req.body)
+            res.render('product/update', currentProduct)
           })
       })
   },

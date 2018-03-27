@@ -3,26 +3,26 @@
         <div class="cell">
             <h1>Update</h1>
 
-            <form action="/product/update/{{product._id}}" method="POST">
+            <form action="/product/update/{{currentProduct._id}}" method="POST">
                 <input type="hidden" name="_csrf" value="{{ _csrf }}">
                 <fieldset>
-                    <input name="product" value="{{product.product}}" type="text" placeholder="Product...">
+                    <input name="product" value="{{currentProduct.product}}" type="text" placeholder="Product...">
                 </fieldset>
 
                 <fieldset>
-                    <input name="callories" value="{{product.callories}}" type="number" placeholder="Callories...">
+                    <input name="callories" value="{{currentProduct.callories}}" type="number" placeholder="Callories...">
                 </fieldset>
 
                 <fieldset>
-                    <input name="carbs" value="{{product.carbs}}" type="number" placeholder="Carbs...">
+                    <input name="carbs" value="{{currentProduct.carbs}}" type="number" placeholder="Carbs...">
                 </fieldset>
 
                 <fieldset>
-                    <input name="protein" value="{{product.protein}}" type="number" placeholder="Protein...">
+                    <input name="protein" value="{{currentProduct.protein}}" type="number" placeholder="Protein...">
                 </fieldset>
 
                 <fieldset>
-                    <input name="fat" value="{{product.fat}}" type="number" placeholder="Fat...">
+                    <input name="fat" value="{{currentProduct.fat}}" type="number" placeholder="Fat...">
                 </fieldset>
 
                 <fieldset>

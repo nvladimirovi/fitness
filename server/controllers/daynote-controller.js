@@ -3,15 +3,16 @@ const DayNote = mongoose.model('DayNote')
 const User = mongoose.model('User')
 const Product = mongoose.model('Product')
 const errorHandler = require('../utilities/error-handler')
+const math = require('../utilities/math')
 
 function validateCreateDayNote (payload) {
   const errors = {}
   let isFormValid = true
   let message = ''
 
-  if (!payload || payload.weight <= 10) {
+  if (!payload || payload.weight <= 10 || payload.weight >= 2000) {
     isFormValid = false
-    errors.weight = 'Please provide valid number which is greather then 10.'
+    errors.weight = 'Please provide valid number which is greather then 10 or less then 2000.'
   }
 
   if (!payload || typeof payload.product !== 'string' || payload.product.trim().length === 0) {
@@ -80,10 +81,10 @@ module.exports = {
 
                   note.total = {
                     weight: note.total.weight + weight,
-                    callories: parseInt(callories + ((product.callories / 100) * weight)),
-                    carbs: carbs + ((product.carbs / 100) * weight),
-                    protein: protein + ((product.protein / 100) * weight),
-                    fat: fat + ((product.fat / 100) * weight)
+                    callories: parseInt(callories + (product.callories / 100) * weight),
+                    carbs: math.roundTo((carbs + ((product.carbs / 100) * weight)), 2),
+                    protein: math.roundTo((protein + ((product.protein / 100) * weight)), 2),
+                    fat: math.roundTo((fat + ((product.fat / 100) * weight)), 2)
                   }
 
                   note
@@ -108,10 +109,10 @@ module.exports = {
                     }],
                     total: {
                       weight,
-                      callories: (product.callories / 100) * weight,
-                      carbs: (product.carbs / 100) * weight,
-                      protein: (product.protein / 100) * weight,
-                      fat: (product.fat / 100) * weight
+                      callories: parseInt((product.callories / 100) * weight),
+                      carbs: math.roundTo(((product.carbs / 100) * weight), 2),
+                      protein: math.roundTo(((product.protein / 100) * weight), 2),
+                      fat: math.roundTo(((product.fat / 100) * weight), 2)
                     }
                   }
 

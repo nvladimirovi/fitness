@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
+const math = require('../utilities/math')
 
 let dayNoteSchema = new mongoose.Schema({
   dateOriginal: { type: Date, required: true },
@@ -30,10 +31,10 @@ dayNoteSchema.method({
 
     this.products.forEach(element => {
       this.total.weight += element.weight
-      this.total.callories += (element.product.callories / 100) * element.weight
-      this.total.carbs += (element.product.carbs / 100) * element.weight
-      this.total.protein += (element.product.protein / 100) * element.weight
-      this.total.fat += (element.product.fat / 100) * element.weight
+      this.total.callories += parseInt((element.product.callories / 100) * element.weight)
+      this.total.carbs += math.roundTo(((element.product.carbs / 100) * element.weight), 2)
+      this.total.protein += math.roundTo(((element.product.protein / 100) * element.weight), 2)
+      this.total.fat += math.roundTo(((element.product.fat / 100) * element.weight), 2)
     })
   }
 })

@@ -25,10 +25,10 @@
 	<table>
 		<tr>
 			<td>
-				<form id="delete-post-form" action="/daynote/delete/{{ this._id }}" method="POST">
+				<form id="delete-note-form_{{ this._id }}" action="/daynote/delete/{{ this._id }}" method="POST">
 					<input type="hidden" name="_csrf" value="{{ ../_csrf }}">
 				</form>
-				<a href="javascript:document.getElementById('delete-post-form').submit()">Delete</a>
+				<a href="javascript:document.getElementById('delete-note-form_{{ this._id }}').submit()">Delete</a>
 			</td>
 		</tr>
 		{{#if this.yourWeight}}
@@ -67,10 +67,10 @@
 			<td>{{this.product.protein}}</td>
 			<td>{{this.product.fat}}</td>
 			<td>
-				<form id="delete-product-post-form" action="/daynote/delete/product/{{ ../this._id }}/{{ this._id }}" method="POST">
+				<form id="delete-product-form_{{ this._id }}" action="/daynote/delete/product/{{ ../this._id }}/{{ this._id }}" method="POST">
 					<input type="hidden" name="_csrf" value="{{ ../../_csrf }}">
 				</form>
-				<a href="javascript:document.getElementById('delete-product-post-form').submit()">Delete</a>
+				<a href="javascript:document.getElementById('delete-product-form_{{ this._id }}').submit()">Delete</a>
 			</td>
 		</tr>
 		{{/each}}
