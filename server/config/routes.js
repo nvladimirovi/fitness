@@ -8,12 +8,12 @@ module.exports = app => {
   /**
    * User
    */
-  app.get(
+  /* app.get(
     '/users/register',
     auth.isAlreadyAuthenticated,
     controllers.users.registerGet
   )
-  app.post('/users/register', controllers.users.registerPost)
+  app.post('/users/register', controllers.users.registerPost) */
   app.get(
     '/users/login',
     auth.isAlreadyAuthenticated,
