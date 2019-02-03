@@ -1,3 +1,23 @@
-<p>
-  login works!
-</p>
+<h3>Login</h3>
+
+<form clrForm [formGroup]="loginForm">
+  <clr-input-container>
+    <label>Username</label>
+    <input clrInput type="text" [formControlName]="UIFields.username" />
+    <clr-control-helper>Enter your username</clr-control-helper>
+    <clr-control-error>
+      {{ loginForm.get(UIFields.username).errors | json }}
+    </clr-control-error>
+  </clr-input-container>
+
+  <clr-input-container>
+    <label>Password</label>
+    <input clrInput type="password" [formControlName]="UIFields.password" />
+    <clr-control-helper>Enter your password</clr-control-helper>
+    <clr-control-error>
+      {{ loginForm.get(UIFields.password).errors | json }}
+    </clr-control-error>
+  </clr-input-container>
+
+  <button class="btn btn-sm btn-primary" type="submit" (click)="submit()">Login</button>
+</form>
