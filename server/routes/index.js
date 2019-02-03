@@ -3,5 +3,5 @@ const api = require('./api')
 
 module.exports = (app) => {
 	app.use('/api', api)
-	app.get('/', controllers.home.index)
+	app.get('*', controllers.home.index)
 }

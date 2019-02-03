@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ClrForm } from '@clr/angular';
+import { LoginService } from './login.service';
 
 const UIFields = {
   username: 'username',
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private loginService: LoginService
   ) { }
 
   ngOnInit() {
@@ -37,11 +39,11 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  submit() {  
+  submit() {
     if (this.loginForm.invalid) {
       this.clrForm.markAsDirty();
     } else {
-      console.log(this.loginForm.value);
+      this.loginService.login(this.loginForm.value);
     }
   }
 }

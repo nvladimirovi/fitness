@@ -15,10 +15,19 @@ module.exports = (app) => {
 	app.set('view engine', 'ejs')
 	app.engine('html', require('ejs').renderFile)
 
-	app.use(helmet()) // Security
-	app.use(cookieParser())
 	app.use(bodyParser.json()) // for parsing application/json
 	app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+	app.use(cookieParser())
+
+	app.use(helmet()) // Security
+	
+	app.use(csrf({ cookie: true }))
+	app.use(function (req, res, next) {
+		res.cookie('XSRF-TOKEN', req.csrfToken())
+		return next()
+	})
+
 	app.use(session({
 		secret: encrypt.generateSalt(),
 		cookie: {
@@ -32,23 +41,11 @@ module.exports = (app) => {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
-	app.use(csrf()) // Cross-site Request Forgery Protection
 	app.use(new RateLimit({
 		windowMs: 15 * 60 * 1000, // 15 minutes
 		max: 100, // limit each IP to 100 requests per windowMs
 		delayMs: 0 // disable delaying - full speed until the max limit is reached
 	}))
-
-	app.use((req, res, next) => {
-		// console.log(req.session.passport)
-		if (req.user) {
-			res.locals.currentUser = req.user
-			res.locals.isAdmin = req.user.roles.indexOf('Admin') >= 0
-		}
-		res.locals._csrf = req.csrfToken()
-
-		next()
-	})
 
 	app.use(express.static('views/home')) // Set static folder
 

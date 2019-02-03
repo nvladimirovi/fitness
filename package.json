@@ -30,7 +30,8 @@
     "validator": "9.4.1"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start-watch": "nodemon index.js"
   },
   "devDependencies": {
     "standard": "^11.0.1"

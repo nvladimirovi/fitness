@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home.component';
 import { LoginModule } from '../login/login.module';
 import { RegisterModule } from '../register/register.module';
+import { RestManager } from '../core/rest-manager/rest.manager';
 
 @NgModule({
   imports: [
@@ -10,6 +11,9 @@ import { RegisterModule } from '../register/register.module';
     LoginModule,
     RegisterModule,
   ],
-  declarations: [HomeComponent]
+  declarations: [HomeComponent],
+  providers: [
+    RestManager
+  ]
 })
 export class HomeModule { }

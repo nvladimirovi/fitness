@@ -9,6 +9,7 @@ import { ProfileModule } from './profile/profile.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HomeModule } from './home/home.module';
 import { AdminModule } from './admin/admin.module';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,11 @@ import { AdminModule } from './admin/admin.module';
     BrowserAnimationsModule,
     ClarityModule,
     BrowserAnimationsModule,
+    HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'XSRF-TOKEN',
+    }),
     AppRoutingModule,
     ProfileModule,
     HomeModule,

@@ -52,7 +52,7 @@ function validateLoginForm (payload) {
 
 	if (!payload || typeof payload.username !== 'string' || payload.username.trim().length === 0) {
 		isFormValid = false
-		errors.username = 'Please provide your username address.'
+		errors.username = 'Please provide your username.'
 	}
 
 	if (!payload || typeof payload.password !== 'string' || payload.password.trim().length === 0) {
@@ -147,32 +147,36 @@ module.exports = {
 
 		if (!validationResult.success) {
 			console.log(validationResult.errors)
-			res.locals.globalError = validationResult.message
-			res.render('users/login')
+			res.status(400).json({
+				error: validationResult.message
+			})
 			return
 		}
 
 		User
 			.findOne({ username: reqUser.username }).then(user => {
 				if (!user) {
-					res.locals.globalError = 'Invalid user data'
-					res.render('users/login')
+					res.status(400).json({
+						error: 'Invalid user data'
+					})
 					return
 				}
 
 				if (!user.authenticate(reqUser.password)) {
-					res.locals.globalError = 'Invalid user data'
-					res.render('users/login')
+					res.status(400).json({
+						error: 'Invalid user data'
+					})
 					return
 				}
 
 				req.logIn(user, (err, user) => {
 					if (err) {
-						res.locals.globalError = err
-						res.render('users/login')
+						res.status(400).json({
+							error: err
+						})
 					}
 
-					res.redirect('/')
+					res.status(200).end()
 				})
 			})
 	},
