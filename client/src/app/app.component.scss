@@ -1,0 +1,25 @@
+@import "./core/mixins.scss";
+@import "./core/colors.scss";
+
+.navigation {
+  @include flexbox();
+  @include flex-flow(row nowrap);
+  @include justify-content(flex-end);
+  background: $blue;
+  padding: 5px 40px;
+
+  button {
+    background: $white;
+    border: 0;
+    color: $blue;
+    margin-right: 10px;
+
+    &:focus {
+      outline: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

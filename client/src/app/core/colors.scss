@@ -1,0 +1,8 @@
+@import "../../../node_modules/@clr/ui/src/color/utils/colors.clarity";
+@import "../../../node_modules/@clr/ui/src/color/utils/contrast-cache.clarity";
+@import "../../../node_modules/@clr/ui/src/color/utils/helpers.clarity";
+@import "../../../node_modules/@clr/ui/src/color/variables.color";
+@import "../../../node_modules/@clr/ui/src/color/color.clarity";
+
+$white: #fff;
+$blue: clr-getColor(light-midtone, action-blues);
