@@ -1,24 +1,38 @@
-const passport = require('passport')
-const LocalPassport = require('passport-local')
-const User = require('mongoose').model('User')
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const bcrypt = require('bcrypt');
 
-module.exports = () => {
-  passport.use(new LocalPassport((username, password, done) => {
-    User.findOne({ username: username }).then(user => {
-      if (!user) return done(null, false)
-      if (!user.authenticate(password)) return done(null, false)
-      return done(null, user)
-    })
-  }))
+const User = require('../models/user.model');
+const config = require('./config');
 
-  passport.serializeUser((user, done) => {
-    if (user) return done(null, user._id)
-  })
+const localLogin = new LocalStrategy({
+  usernameField: 'email'
+}, async (email, password, done) => {
+  let user = await User.findOne({ email });
+  if (!user || !bcrypt.compareSync(password, user.hashedPassword)) {
+    return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
+  }
+  user = user.toObject();
+  delete user.hashedPassword;
+  done(null, user);
+});
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id).then(user => {
-      if (!user) return done(null, false)
-      return done(null, user)
-    })
-  })
-}
+const jwtLogin = new JwtStrategy({
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.jwtSecret
+}, async (payload, done) => {
+  let user = await User.findById(payload._id);
+  if (!user) {
+    return done(null, false);
+  }
+  user = user.toObject();
+  delete user.hashedPassword;
+  done(null, user);
+});
+
+passport.use(jwtLogin);
+passport.use(localLogin);
+
+module.exports = passport;

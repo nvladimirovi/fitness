@@ -1,1 +1,0 @@
-db.getCollection('daynotes').update({}, { $set: { dateOriginal: new Date(), date: new Date().getDate(), month : new Date().getMonth(), year: new Date().getFullYear() }}, { multi: true })

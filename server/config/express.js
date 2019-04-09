@@ -1,53 +1,86 @@
-const express = require('express')
-const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const passport = require('passport')
-const helmet = require('helmet')
-const csrf = require('csurf') // Cross-site Request Forgery Protection
-const encrypt = require('../utilities/encryption')
-const RateLimit = require('express-rate-limit')
-const path = require('path')
+const path = require('path');
+const express = require('express');
+const httpError = require('http-errors');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const compress = require('compression');
+const methodOverride = require('method-override');
+const cors = require('cors');
+const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+const routes = require('../routes/index.route');
+const config = require('./config');
+const passport = require('./passport')
 
-module.exports = (app) => {
-	// View Engines
-	app.set('views', path.join(__dirname, '../../views'))
-	app.set('view engine', 'ejs')
-	app.engine('html', require('ejs').renderFile)
+const app = express();
 
-	app.use(bodyParser.json()) // for parsing application/json
-	app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-
-	app.use(cookieParser())
-
-	app.use(helmet()) // Security
-	
-	app.use(csrf({ cookie: true }))
-	app.use(function (req, res, next) {
-		res.cookie('XSRF-TOKEN', req.csrfToken())
-		return next()
-	})
-
-	app.use(session({
-		secret: encrypt.generateSalt(),
-		cookie: {
-			maxAge: 2628000000,
-			secure: 'auto'
-		},
-		resave: false,
-		saveUninitialized: false,
-		httpOnly: true
-	}))
-	app.use(passport.initialize())
-	app.use(passport.session())
-
-	app.use(new RateLimit({
-		windowMs: 15 * 60 * 1000, // 15 minutes
-		max: 100, // limit each IP to 100 requests per windowMs
-		delayMs: 0 // disable delaying - full speed until the max limit is reached
-	}))
-
-	app.use(express.static('views/home')) // Set static folder
-
-	console.log('Express ready!')
+if (config.env === 'development') {
+  app.use(logger('dev'));
 }
+
+// Choose what fronten framework to serve the dist from
+var distDir = '../../dist/';
+if (config.frontend == 'react'){
+  distDir ='../../node_modules/material-dashboard-react/dist'
+ }else{
+  distDir ='../../dist/' ;
+ }
+
+// 
+app.use(express.static(path.join(__dirname, distDir)))
+app.use(/^((?!(api)).)*/, (req, res) => {
+  res.sendFile(path.join(__dirname, distDir + '/index.html'));
+});
+
+console.log(distDir);
+ //React server
+app.use(express.static(path.join(__dirname, '../../node_modules/material-dashboard-react/dist')))
+app.use(/^((?!(api)).)*/, (req, res) => {
+res.sendFile(path.join(__dirname, '../../dist/index.html'));
+}); 
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cookieParser());
+app.use(compress());
+app.use(methodOverride());
+
+// secure apps by setting various HTTP headers
+app.use(helmet());
+
+// enable CORS - Cross Origin Resource Sharing
+app.use(cors());
+
+app.use(passport.initialize());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// API router
+app.use('/api/', routes);
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new httpError(404)
+  return next(err);
+});
+
+// error handler, send stacktrace only during development
+app.use((err, req, res, next) => {
+
+  // customize Joi validation errors
+  if (err.isJoi) {
+    err.message = err.details.map(e => e.message).join("; ");
+    err.status = 400;
+  }
+
+  res.status(err.status || 500).json({
+    message: err.message
+  });
+  next(err);
+});
+
+module.exports = app;
