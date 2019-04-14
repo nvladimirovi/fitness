@@ -19,6 +19,10 @@
       {
         "name": "Auth",
         "description": "API for auth in the system"
+      },
+      {
+        "name": "Products",
+        "description": "API for products in the system"
       }
     ],
     "schemes": [
@@ -42,35 +46,52 @@
         "post": {
           "tags": ["Auth"],
           "description": "Login to the system",
-        "parameters": [{
-          "name": "auth",
-          "in": "body",
-          "description": "User auth details",
-          "schema": {
-            "type": "object",
-            "required": ["email", "password"],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
+          "parameters": [{
+            "name": "auth",
+            "in": "body",
+            "description": "User auth details",
+            "schema": {
+              "type": "object",
+              "required": ["email", "password"],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "User is loggedin",
+              "schema": {
+                "$ref": "#/definitions/User"
               }
             }
           }
-        }],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "User is loggedin",
-            "schema": {
-              "$ref": "#/definitions/User"
+        }
+      },
+      "/product": {
+        "get": {
+          "tags": ["Product"],
+          "description": "Get all products",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Products are returned",
+              "schema": {
+                "$ref": "#/definitions/Products"
+              }
             }
           }
         }
-      }
       }
     },
     "definitions": {
@@ -105,6 +126,40 @@
       "Users": {
         "type": "array",
         "$ref": "#/definitions/User"
+      },
+      "Product": {
+        "required": [
+          "name",
+          "callories",
+          "carbs",
+          "protein",
+          "fat"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "callories": {
+            "type": "number"
+          },
+          "carbs": {
+            "type": "number"
+          },
+          "protein": {
+            "type": "number"
+          },
+          "fat": {
+            "type": "number"
+          }
+        }
+      },
+      "Products": {
+        "type": "array",
+        "$ref": "#/definitions/Product"
       },
       "Auth": {
         "type": "object",
